@@ -1,4 +1,6 @@
 import os
+import datetime
+import random
 from dotenv import load_dotenv
 import requests
 from typing import Final
@@ -58,13 +60,47 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # Handles response 
 def handle_response(text: str) -> str:
     processed: str = text.lower()
-    
+
+    # Time-based greeting
+    current_time = datetime.datetime.now().time()
+    if current_time < datetime.time(12, 0):
+        greeting = 'Good morning'
+    elif current_time < datetime.time(17, 0):
+        greeting = 'Good afternoon'
+    else:
+        greeting = 'Good evening'
+
+    if any(keyword in processed for keyword in ['hi', 'hello', 'hey']):
+        return f'{greeting}! How can I assist you today? 😊'
+
     if 'how are you' in processed:
-        return 'I am good'
-    
+        return 'I am good, thank you for asking! How may I help you today? 😊'
+
     if 'who are you' in processed:
-        return 'I am plutomenace'
-    
+        return 'I am Plutomenace, your friendly news bot.'
+
+    # Random fun responses
+    fun_responses = [
+        "I'm feeling fantastic today!",
+        "Ask me anything, and I'll do my best to help!",
+        "Ready for some news? 📰",
+    ]
+
+    if any(keyword in processed for keyword in ['fun', 'joke']):
+        return random.choice(fun_responses)
+
+    # Thank you response
+    if 'thank you' in processed:
+        return 'You\'re welcome! If you have more questions, feel free to ask.'
+
+    # Handling common questions
+    if 'what can you do' in processed:
+        return 'I can fetch the latest news for you. Try the /news command!'
+
+    # Politeness check
+    if any(keyword in processed for keyword in ['please', 'kindly']):
+        return 'Thank you for your polite request! How may I assist you? 😊'
+
     return 'I do not understand what you wrote...'
 
 # A function to get the news 
