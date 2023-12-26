@@ -1,7 +1,3 @@
-Certainly! Here's a shorter version:
-
----
-
 # Telegram News Bot
 
 The Telegram News Bot delivers the latest headlines to your Telegram chat seamlessly.
