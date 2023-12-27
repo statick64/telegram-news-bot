@@ -17,6 +17,7 @@ load_dotenv()
 TOKEN: Final = os.environ.get('TOKEN')
 BOT_USERNAME: Final = os.environ.get('BOT_USERNAME')
 GNEWS_API_KEY: Final = os.environ.get('GNEWS_API_KEY')
+WEATHER_API_KEY: Final = os.getenv('WEATHER_API_KEY')
 
 # Set up basic logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -41,7 +42,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/start - Welcome message and basic bot instructions.\n"
         "/help - Shows this help message detailing command usage.\n"
         "/custom - Sends a custom message.\n"
-        "/news - Fetches and displays the latest news.\n\n"
+        "/news - Fetches and displays the latest news.\n"
+        "/weather - Fetches and displays the current weather conditions for a specified city.\n\n"
         "🗂️ **News Categories:**\n"
         "/news business - Latest business news\n"
         "/news entertainment - Entertainment updates\n"
@@ -130,41 +132,62 @@ def handle_response(text: str) -> str:
 
     return 'I do not understand what you wrote...'
 
-# A function to get the news
-def fetch_news(category='general', query='latest'):
+# A function to get the news 
+def fetch_news(query='latest'):
     try:
-        if category.lower() == 'categories':
-            # Provide a list of available news categories
-            return "Available news categories: business, entertainment, health, science, sports, technology"
-
-        supported_categories = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology']
-        if category.lower() not in supported_categories:
-            return f"Invalid category. Supported categories: {', '.join(supported_categories)}."
-
-        url = f"https://gnews.io/api/v4/{category.lower()}-headlines?token={GNEWS_API_KEY}&lang=en&q={query}"
+        url = f"https://gnews.io/api/v4/top-headlines?token={GNEWS_API_KEY}&lang=en&q={query}"
         response = requests.get(url)
-
+        
         if response.status_code == 200:
             data = response.json()
             articles = data.get('articles', [])
-
-            if not articles:
-                return "No articles found."
-
+            
             news_messages = []
             for article in articles[:5]:  # Limit to the top 5 articles
                 title = article.get('title', 'No title')
                 url = article.get('url', '#')
                 news_messages.append(f"{title} - {url}")
-
+            
             return "\n\n".join(news_messages)
         else:
-            logger.error(f"Failed to retrieve news. Status Code: {response.status_code}")
-            return f"Failed to retrieve news. Error: {response.text}"
-
+            logger.error(f"Failed to retrieve news. Status Code: {response.status_code}")  # logs news error
+            return "Failed to retrieve news."
+    # Error handling for the news 
     except requests.RequestException as e:
         logger.error(f"An error occurred: {e}")
         return "Failed to retrieve news due to an error."
+
+# Modify the function to fetch weather
+async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    city = ' '.join(context.args)  # Extract city from command arguments
+    if not city:
+        await update.message.reply_text("Please specify a city. Example: /weather London")
+        return
+
+    # Fetch weather data using the API
+    weather_data = fetch_weather(city)
+
+    # Send the weather information as a reply
+    await update.message.reply_text(weather_data)
+
+def fetch_weather(city):
+    try:
+        url = f'http://api.weatherapi.com/v1/current.json?key={WEATHER_API_KEY}&q={city}&aqi=no'
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            data = response.json()
+            # Extract relevant weather information from the response
+            temperature = data['current']['temp_c']
+            weather_description = data['current']['condition']['text']
+
+            return f"Current weather in {city}: {weather_description}, Temperature: {temperature}°C"
+        else:
+            return f"Failed to retrieve weather information. Error: {response.text}"
+
+    except requests.RequestException as e:
+        return f"Failed to retrieve weather information due to an error: {e}"
+
 
 # Comment
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -196,6 +219,7 @@ if __name__ == '__main__':
     app.add_handler(CommandHandler('help', help_command))
     app.add_handler(CommandHandler('custom', custom_command))
     app.add_handler(CommandHandler('news', news_command))
+    app.add_handler(CommandHandler('weather', weather_command))
     app.add_handler(MessageHandler(filters.TEXT, handle_message))
     app.add_handler(InlineQueryHandler(inline_query))
     app.add_error_handler(error)
