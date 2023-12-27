@@ -21,6 +21,11 @@ The Telegram News Bot delivers the latest headlines to your Telegram chat seamle
   /help
   ```
 
+- **Fetch Weather report:**
+  ```
+  /weather [city]
+  ```
+
 - **Fetch Latest News:**
   ```
   /news [query]
