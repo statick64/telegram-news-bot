@@ -5,6 +5,7 @@ The Telegram News Bot delivers the latest headlines to your Telegram chat seamle
 ## Features
 
 - **Top Headlines:** Use `/news` to get the latest news instantly.
+- **Current Weather:** Use `/weather [city]` to fetch and display the current weather conditions for the specified city.
 - **Command Variety:** Includes `/start`, `/help`, `/custom`, and natural language interaction.
 - **Inline Queries:** Start a message with the bot's username for quick news results.
 
