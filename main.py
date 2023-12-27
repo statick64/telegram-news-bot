@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 import requests
 from typing import Final
 import logging  # Import the logging module
-
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from telegram.ext import InlineQueryHandler
@@ -26,13 +25,13 @@ logger = logging.getLogger(__name__)
 #handling the different commands
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     start_text = (
-        "🌟 **Hallo! I am Plutomenace News Bot!** 🌟\n\n"
+        "🌟 Hallo! I am Southsider News Bot! 🌟\n\n"
         "I'm here to keep you informed with the latest news. "
         "Type /help to see all available commands and get started. "
         "Feel free to use /news to fetch headlines or search for news inline!\n\n"
         "Happy reading! 📰😊"
     )
-    await update.message.reply_text(start_text, parse_mode='MarkdownV2')
+    await update.message.reply_text(start_text)
 
 # Help descriptions
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -53,7 +52,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "🔍 **Inline News Search:**\n"
         "Type '@bot_username query' to search for news inline."
     )
-    await update.message.reply_text(help_text, parse_mode='MarkdownV2')
+    await update.message.reply_text(help_text, parse_mode=None)
+
 
 # Custom command chat
 async def custom_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -63,7 +63,7 @@ async def custom_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "We're working hard to bring you exciting new features. "
         "Stay tuned for updates! 😊"
     )
-    await update.message.reply_text(under_construction_text, parse_mode='MarkdownV2')
+    await update.message.reply_text(under_construction_text)
 
 # Fetching News from web
 async def news_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -104,16 +104,16 @@ def handle_response(text: str) -> str:
         return 'I am good, thank you for asking! How may I help you today? 😊'
 
     if 'who are you' in processed:
-        return 'I am Plutomenace, your friendly news bot.'
+        return 'I am Southsider, your friendly news bot.'
 
     # Random fun responses
     fun_responses = [
         "I'm feeling fantastic today!",
-        "Ask me anything, and I'll do my best to help!",
-        "Ready for some news? 📰",
+        "In the world of news!",
+        "We review the news for the day! 📰",
     ]
 
-    if any(keyword in processed for keyword in ['fun', 'joke']):
+    if any(keyword in processed for keyword in ['fun', 'news', 'gossip']):
         return random.choice(fun_responses)
 
     # Thank you response
@@ -130,15 +130,16 @@ def handle_response(text: str) -> str:
 
     return 'I do not understand what you wrote...'
 
-# A function to get the news 
+# A function to get the news
 def fetch_news(category='general', query='latest'):
     try:
         if category.lower() == 'categories':
             # Provide a list of available news categories
             return "Available news categories: business, entertainment, health, science, sports, technology"
 
-        if category.lower() not in ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology']:
-            return "Invalid category. Type /news categories to see available categories."
+        supported_categories = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology']
+        if category.lower() not in supported_categories:
+            return f"Invalid category. Supported categories: {', '.join(supported_categories)}."
 
         url = f"https://gnews.io/api/v4/{category.lower()}-headlines?token={GNEWS_API_KEY}&lang=en&q={query}"
         response = requests.get(url)
@@ -146,6 +147,9 @@ def fetch_news(category='general', query='latest'):
         if response.status_code == 200:
             data = response.json()
             articles = data.get('articles', [])
+
+            if not articles:
+                return "No articles found."
 
             news_messages = []
             for article in articles[:5]:  # Limit to the top 5 articles
@@ -156,8 +160,8 @@ def fetch_news(category='general', query='latest'):
             return "\n\n".join(news_messages)
         else:
             logger.error(f"Failed to retrieve news. Status Code: {response.status_code}")
-            return "Failed to retrieve news."
-    
+            return f"Failed to retrieve news. Error: {response.text}"
+
     except requests.RequestException as e:
         logger.error(f"An error occurred: {e}")
         return "Failed to retrieve news due to an error."
