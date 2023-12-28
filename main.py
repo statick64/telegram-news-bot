@@ -6,6 +6,7 @@ import requests
 from typing import Final
 import logging  # Import the logging module
 from telegram import Update
+from telegram import constants
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from telegram.ext import InlineQueryHandler
 from telegram import InlineQueryResultArticle, InputTextMessageContent
@@ -227,7 +228,7 @@ async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # Fetching the weather report
 def fetch_weather(city):
     try:
-        url = f'http://api.weatherapi.com/v1/current.json?key={WEATHER_API_KEY}&q={city}&aqi=no'
+        url = f'https://api.weatherapi.com/v1/current.json?key={WEATHER_API_KEY}&q={city}&aqi=no'
         response = requests.get(url)
 
         if response.status_code == 200:
@@ -235,13 +236,25 @@ def fetch_weather(city):
             # Extract relevant weather information from the response
             temperature = data['current']['temp_c']
             weather_description = data['current']['condition']['text']
+            localtime = data['location']['localtime']
+            
+            # Construct the complete URL for the weather icon
+            weather_icon_url = f"https:{data['current']['condition']['icon']}"
 
-            return f"Current weather in {city}: {weather_description}, Temperature: {temperature}°C"
+            # Build the reply text with Markdown
+            reply_text = (
+                f"Current weather in {city}: {weather_description}, Temperature: {temperature}°C\n"
+                f"[Weather Icon]({weather_icon_url})\n"
+                f"Local Time: {localtime}"
+            )
+
+            return reply_text
         else:
             return f"Failed to retrieve weather information. Error: {response.text}"
 
     except requests.RequestException as e:
         return f"Failed to retrieve weather information due to an error: {e}"
+
 
 # ----------------------------------------------------------------------MESSAGE HANDLER--------------------------------------------------------------------
     
