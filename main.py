@@ -56,7 +56,6 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.message.reply_text(help_text, parse_mode=None)
 
-
 # Custom command chat
 async def custom_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     under_construction_text = (
@@ -66,25 +65,6 @@ async def custom_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Stay tuned for updates! 😊"
     )
     await update.message.reply_text(under_construction_text)
-
-# Fetching News from web
-async def news_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = ' '.join(context.args) if context.args else 'latest'
-    # tells chat that the bot is fetching the news
-    await update.message.reply_text("Fetching the latest news, please wait...") 
-    news = fetch_news(query)  # Ensure the query is used in fetching news
-    await update.message.reply_text(f"Latest News:\n\n{news}")
-
-async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.inline_query.query
-    results = [
-        InlineQueryResultArticle(
-            id=query,
-            title="Latest News",
-            input_message_content=InputTextMessageContent(fetch_news(query))
-        )
-    ]
-    await update.inline_query.answer(results)
 
 # Handles response 
 def handle_response(text: str) -> str:
@@ -152,30 +132,49 @@ def handle_response(text: str) -> str:
         "I'm sorry, I didn't quite get that. Could you try asking in a different way?",
         "My circuits might be a bit tangled! Can you help me understand your question better?",
     ]
-
     return random.choice(unrecognized_response)
+
+# Fetching News from web
+async def news_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = ' '.join(context.args) if context.args else 'latest'
+    # tells chat that the bot is fetching the news
+    await update.message.reply_text("Fetching the latest news, please wait...") 
+    news = fetch_news(query)  # Ensure the query is used in fetching news
+    await update.message.reply_text(f"Latest News:\n\n{news}")
+
+async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.inline_query.query
+    results = [
+        InlineQueryResultArticle(
+            id=query,
+            title="Latest News",
+            input_message_content=InputTextMessageContent(fetch_news(query))
+        )
+    ]
+    await update.inline_query.answer(results)
 
 # A function to get the news 
 def fetch_news(query='latest'):
     try:
         url = f"https://gnews.io/api/v4/top-headlines?token={GNEWS_API_KEY}&lang=en&q={query}"
         response = requests.get(url)
-        
+
         if response.status_code == 200:
+            print("iuoioi")
             data = response.json()
             articles = data.get('articles', [])
-            
+
             news_messages = []
             for article in articles[:5]:  # Limit to the top 5 articles
                 title = article.get('title', 'No title')
                 url = article.get('url', '#')
                 news_messages.append(f"{title} - {url}")
-            
+
             return "\n\n".join(news_messages)
         else:
-            logger.error(f"Failed to retrieve news. Status Code: {response.status_code}")  # logs news error
+            logger.error(f"Failed to retrieve news. Status Code: {response.status_code}")
             return "Failed to retrieve news."
-    # Error handling for the news 
+    
     except requests.RequestException as e:
         logger.error(f"An error occurred: {e}")
         return "Failed to retrieve news due to an error."
@@ -211,7 +210,6 @@ def fetch_weather(city):
 
     except requests.RequestException as e:
         return f"Failed to retrieve weather information due to an error: {e}"
-
 
 # Comment
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
