@@ -142,6 +142,19 @@ async def news_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     news = fetch_news(query)  # Ensure the query is used in fetching news
     await update.message.reply_text(f"Latest News:\n\n{news}")
 
+
+    # Simple parsing to separate query and category (if provided)
+    # if args:
+    #     query = args[0]
+    #     if len(args) > 1:
+    #         category = args[1]
+
+    # query = ' '.join(context.args) if context.args else 'latest'
+    # tells chat that the bot is fetching the news
+    # await update.message.reply_text("Fetching the latest news, please wait...") 
+    # news = fetch_news(category, query)  # Ensure the query is used in fetching news
+    # await update.message.reply_text(f"Latest News:\n\n{news}")
+
 async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.inline_query.query
     results = [
@@ -156,8 +169,15 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # A function to get the news 
 def fetch_news(query='latest'):
     try:
+        # if category.lower() == 'categories':
+        #     # Provide a list of available news categories
+        #     return "Available news categories: business, entertainment, health, science, sports, technology"
+
+        # if category.lower() not in ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology']:
+        #     return "Invalid category. Type /news categories to see available categories."
         url = f"https://gnews.io/api/v4/top-headlines?token={GNEWS_API_KEY}&lang=en&q={query}"
         response = requests.get(url)
+
 
         if response.status_code == 200:
             print("iuoioi")
