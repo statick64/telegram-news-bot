@@ -18,21 +18,26 @@ TOKEN: Final = os.environ.get('TOKEN')
 BOT_USERNAME: Final = os.environ.get('BOT_USERNAME')
 GNEWS_API_KEY: Final = os.environ.get('GNEWS_API_KEY')
 WEATHER_API_KEY: Final = os.getenv('WEATHER_API_KEY')
+# NEWS_API_KEY: Final = os.environ.get('NEWS_API_KEY')
 
 # Set up basic logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+# ---------------------------------------------------START-------------------------------------------------------------------
+
 #handling the different commands
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     start_text = (
-        "🌟 Hallo! I am Southsider News Bot! 🌟\n\n"
+        "🌟 **Hallo! I am Southsider News Bot!** 🌟\n\n"
         "I'm here to keep you informed with the latest news. "
         "Type /help to see all available commands and get started. "
         "Feel free to use /news to fetch headlines or search for news inline!\n\n"
         "Happy reading! 📰😊"
     )
     await update.message.reply_text(start_text)
+
+# --------------------------------------------------------HELP-------------------------------------------------------------------
 
 # Help descriptions
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -42,8 +47,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/start - Welcome message and basic bot instructions.\n"
         "/help - Shows this help message detailing command usage.\n"
         "/custom - Sends a custom message.\n"
-        "/news - Fetches and displays the latest news.\n"
-        "/weather - Fetches and displays the current weather conditions for a specified city.\n\n"
+        "/news - Fetches and displays the latest news.\n\n"
         "🗂️ **News Categories:**\n"
         "/news business - Latest business news\n"
         "/news entertainment - Entertainment updates\n"
@@ -54,7 +58,9 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "🔍 **Inline News Search:**\n"
         "Type '@bot_username query' to search for news inline."
     )
-    await update.message.reply_text(help_text, parse_mode=None)
+    await update.message.reply_text(help_text)
+
+# ----------------------------------------------------------CUSTOM----------------------------------------------------------------
 
 # Custom command chat
 async def custom_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -65,6 +71,8 @@ async def custom_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Stay tuned for updates! 😊"
     )
     await update.message.reply_text(under_construction_text)
+
+# --------------------------------------------------------RESPONSE CHAT--------------------------------------------------------------
 
 # Handles response 
 def handle_response(text: str) -> str:
@@ -134,6 +142,8 @@ def handle_response(text: str) -> str:
     ]
     return random.choice(unrecognized_response)
 
+# ----------------------------------------------------------------NEWS FEATURE-------------------------------------------------------------------
+
 # Fetching News from web
 async def news_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = ' '.join(context.args) if context.args else 'latest'
@@ -166,7 +176,7 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
     await update.inline_query.answer(results)
 
-# A function to get the news 
+    # A function to get the news 
 def fetch_news(query='latest'):
     try:
         # if category.lower() == 'categories':
@@ -198,6 +208,8 @@ def fetch_news(query='latest'):
     except requests.RequestException as e:
         logger.error(f"An error occurred: {e}")
         return "Failed to retrieve news due to an error."
+    
+# --------------------------------------------------------------------WEATHER FEATURE--------------------------------------------------------------------
 
 # Modify the function to fetch weather
 async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -231,6 +243,8 @@ def fetch_weather(city):
     except requests.RequestException as e:
         return f"Failed to retrieve weather information due to an error: {e}"
 
+# ----------------------------------------------------------------------MESSAGE HANDLER--------------------------------------------------------------------
+    
 # Comment
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message_type: str = update.message.chat.type
@@ -252,6 +266,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logger.error(f'Update {update} caused error {context.error}')
+
+# -------------------------------------------------------------------------APP POLLING--------------------------------------------------------------------------
 
 if __name__ == '__main__':
     app = Application.builder().token(TOKEN).build()
