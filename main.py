@@ -108,29 +108,52 @@ def handle_response(text: str) -> str:
     if 'who are you' in processed:
         return 'I am Southsider, your friendly news bot.'
 
-    # Random fun responses
+    # Dynamic Fun Responses
     fun_responses = [
         "I'm feeling fantastic today!",
-        "In the world of news!",
-        "We review the news for the day! 📰",
+        "Exploring the latest news with a touch of excitement!",
+        "Get ready for a news adventure! 🌍🚀",
+        "Breaking news: It's a great day!",
+        "Unveiling the day's top stories with a smile! 😃📰",
     ]
 
-    if any(keyword in processed for keyword in ['fun', 'news', 'gossip']):
+    trigger_keywords = ['fun', 'news', 'gossip']
+
+    if any(keyword in processed for keyword in trigger_keywords):
         return random.choice(fun_responses)
 
     # Thank you response
     if 'thank you' in processed:
         return 'You\'re welcome! If you have more questions, feel free to ask.'
+    
+    # Example user assistance including /help command
+    if 'help' in processed or 'need assistance' in processed:
+        return 'Of course! I\'m here to /help. What do you need assistance with? You can ask about news, specific topics, or use commands like /weather or /custom.'
 
     # Handling common questions
     if 'what can you do' in processed:
         return 'I can fetch the latest news for you. Try the /news command!'
+    
+    # Example educational response
+    if 'how do you work' in processed:
+        return 'I analyze your questions and fetch relevant news articles. Feel free to ask anything!'
+    
+    # Example user engagement
+    if 'recommend' in processed:
+        return 'Certainly! What type of news are you interested in? Technology, sports, or something else?'
 
     # Politeness check
     if any(keyword in processed for keyword in ['please', 'kindly']):
         return 'Thank you for your polite request! How may I assist you? 😊'
+    
+    # Improved Unrecognized Input Response
+    unrecognized_response = [
+        "Oops! It seems like I didn't catch that. Could you please rephrase your question?",
+        "I'm sorry, I didn't quite get that. Could you try asking in a different way?",
+        "My circuits might be a bit tangled! Can you help me understand your question better?",
+    ]
 
-    return 'I do not understand what you wrote...'
+    return random.choice(unrecognized_response)
 
 # A function to get the news 
 def fetch_news(query='latest'):
@@ -170,6 +193,7 @@ async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Send the weather information as a reply
     await update.message.reply_text(weather_data)
 
+# Fetching the weather report
 def fetch_weather(city):
     try:
         url = f'http://api.weatherapi.com/v1/current.json?key={WEATHER_API_KEY}&q={city}&aqi=no'
