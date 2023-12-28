@@ -18,6 +18,7 @@ load_dotenv()
 TOKEN: Final = os.environ.get('TOKEN')
 BOT_USERNAME: Final = os.environ.get('BOT_USERNAME')
 GNEWS_API_KEY: Final = os.environ.get('GNEWS_API_KEY')
+
 # NEWS_API_KEY: Final = os.environ.get('NEWS_API_KEY')
 
 # Set up basic logging
@@ -73,6 +74,8 @@ async def news_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Fetching the latest news, please wait...") 
     news = fetch_news(query)  # Ensure the query is used in fetching news
     await update.message.reply_text(f"Latest News:\n\n{news}")
+
+
     # Simple parsing to separate query and category (if provided)
     # if args:
     #     query = args[0]
@@ -154,9 +157,6 @@ def fetch_news(query='latest'):
         url = f"https://gnews.io/api/v4/top-headlines?token={GNEWS_API_KEY}&lang=en&q={query}"
         response = requests.get(url)
 
-        # url = f"https://gnews.io/api/v4/top-headlines?{category.lower()}token={GNEWS_API_KEY}&lang=en&q={query}"
-        # url = f"https://gnews.io/api/v4/top-headlines?category={category.lower()}&lang=en&country=us&max=10&apikey={GNEWS_API_KEY}"
-        # response = requests.get(url)
 
         if response.status_code == 200:
             print("iuoioi")
