@@ -1,6 +1,5 @@
 # Telegram News Bot
 
-```markdown
 ## Environment Setup
 
 - [python-dotenv Documentation](https://pypi.org/project/python-dotenv/)
