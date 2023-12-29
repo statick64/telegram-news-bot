@@ -1,5 +1,23 @@
 # Telegram News Bot
 
+```markdown
+## Environment Setup
+
+- [python-dotenv Documentation](https://pypi.org/project/python-dotenv/)
+
+## Required APIs
+
+1. [Gnews API Documentation](https://gnews.io/docs/v4#introduction)
+2. [WeatherAPI Documentation](https://www.weatherapi.com/docs/)
+
+## Installation
+
+```bash
+pip install -r requirements.txt
+```
+
+## Overview
+
 The Telegram News Bot delivers the latest headlines to your Telegram chat seamlessly.
 
 ## Features
