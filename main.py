@@ -1,15 +1,13 @@
+# Required libs, please see requirements.txt for installed libs PIP INSTALL
 import os
 import datetime
 import random
-from dotenv import load_dotenv
 import requests
+import logging 
 from typing import Final
-import logging  # Import the logging module
-from telegram import Update
-from telegram import constants
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
-from telegram.ext import InlineQueryHandler
-from telegram import InlineQueryResultArticle, InputTextMessageContent
+from dotenv import load_dotenv
+from telegram import InlineQueryResultArticle, InputTextMessageContent, Update
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes, InlineQueryHandler
 
 # Load environment variables from .env file
 load_dotenv()
@@ -19,7 +17,6 @@ TOKEN: Final = os.environ.get('TOKEN')
 BOT_USERNAME: Final = os.environ.get('BOT_USERNAME')
 GNEWS_API_KEY: Final = os.environ.get('GNEWS_API_KEY')
 WEATHER_API_KEY: Final = os.getenv('WEATHER_API_KEY')
-# NEWS_API_KEY: Final = os.environ.get('NEWS_API_KEY')
 
 # Set up basic logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -27,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------START-------------------------------------------------------------------
 
-#handling the different commands
+# Handling the start commands - Introduction to the bot
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     start_text = (
         "🌟 **Hallo! I am Southsider News Bot!** 🌟\n\n"
@@ -38,9 +35,9 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.message.reply_text(start_text)
 
-# --------------------------------------------------------HELP-------------------------------------------------------------------
+# --------------------------------------------------------HELP---------------------------------------------------------------
 
-# Help descriptions
+# Help descriptions - Functions: start, help, custom, news, weather
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = (
         "🌟 **Welcome to the News Bot!** 🌟\n\n"
@@ -48,7 +45,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/start - Welcome message and basic bot instructions.\n"
         "/help - Shows this help message detailing command usage.\n"
         "/custom - Sends a custom message.\n"
-        "/news - Fetches and displays the latest news.\n\n"
+        "/news - Fetches and displays the latest news.\n"
+        "/weather - Fetches and displays the current weather report and localtime.\n\n"
         "🗂️ **News Categories:**\n"
         "/news business - Latest business news\n"
         "/news entertainment - Entertainment updates\n"
@@ -61,7 +59,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.message.reply_text(help_text)
 
-# ----------------------------------------------------------CUSTOM----------------------------------------------------------------
+# ----------------------------------------------------------CUSTOM-------------------------------------------------------------
 
 # Custom command chat
 async def custom_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -73,13 +71,13 @@ async def custom_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.message.reply_text(under_construction_text)
 
-# --------------------------------------------------------RESPONSE CHAT--------------------------------------------------------------
+# --------------------------------------------------------RESPONSE CHAT--------------------------------------------------------
 
-# Handles response 
+# Handling responses in chat incl dynamic responses
 def handle_response(text: str) -> str:
     processed: str = text.lower()
 
-    # Time-based greeting
+    # Time-based greeting using datetime
     current_time = datetime.datetime.now().time()
     if current_time < datetime.time(12, 0):
         greeting = 'Good morning'
@@ -88,6 +86,7 @@ def handle_response(text: str) -> str:
     else:
         greeting = 'Good evening'
 
+    # greet
     if any(keyword in processed for keyword in ['hi', 'hello', 'hey']):
         return f'{greeting}! How can I assist you today? 😊'
 
@@ -97,27 +96,17 @@ def handle_response(text: str) -> str:
     if 'who are you' in processed:
         return 'I am Southsider, your friendly news bot.'
 
-    # Dynamic Fun Responses
-    fun_responses = [
-        "I'm feeling fantastic today!",
-        "Exploring the latest news with a touch of excitement!",
-        "Get ready for a news adventure! 🌍🚀",
-        "Breaking news: It's a great day!",
-        "Unveiling the day's top stories with a smile! 😃📰",
-    ]
-
-    trigger_keywords = ['fun', 'news', 'gossip']
-
-    if any(keyword in processed for keyword in trigger_keywords):
-        return random.choice(fun_responses)
-
     # Thank you response
     if 'thank you' in processed:
         return 'You\'re welcome! If you have more questions, feel free to ask.'
     
-    # Example user assistance including /help command
+    # Example user assistance incld /help command
     if 'help' in processed or 'need assistance' in processed:
         return 'Of course! I\'m here to /help. What do you need assistance with? You can ask about news, specific topics, or use commands like /weather or /custom.'
+
+    # Example weather response including /weather command
+    if 'weather' in processed:
+        return '✨ Feeling curious about the weather? Try /weather to check the current temperature and local time! 🌡️⌚'
 
     # Handling common questions
     if 'what can you do' in processed:
@@ -131,9 +120,23 @@ def handle_response(text: str) -> str:
     if 'recommend' in processed:
         return 'Certainly! What type of news are you interested in? Technology, sports, or something else?'
 
-    # Politeness check
+    # Politeness check: 2 strings check
     if any(keyword in processed for keyword in ['please', 'kindly']):
         return 'Thank you for your polite request! How may I assist you? 😊'
+    
+    # Dynamic Fun Responses
+    fun_responses = [
+        "I'm feeling fantastic today!",
+        "Exploring the latest news with a touch of excitement!",
+        "Get ready for a news adventure! 🌍🚀",
+        "Breaking news: It's a great day!",
+        "Unveiling the day's top stories with a smile! 😃📰",
+    ]
+
+    trigger_keywords = ['fun', 'news', 'gossip'] # 3 strings check
+
+    if any(keyword in processed for keyword in trigger_keywords):
+        return random.choice(fun_responses)
     
     # Improved Unrecognized Input Response
     unrecognized_response = [
@@ -141,9 +144,9 @@ def handle_response(text: str) -> str:
         "I'm sorry, I didn't quite get that. Could you try asking in a different way?",
         "My circuits might be a bit tangled! Can you help me understand your question better?",
     ]
-    return random.choice(unrecognized_response)
+    return random.choice(unrecognized_response) # when none ifs are met return unrecognized_response
 
-# ----------------------------------------------------------------NEWS FEATURE-------------------------------------------------------------------
+# ----------------------------------------------------------------NEWS FEATURE----------------------------------------------------------
 
 # Fetching News from web
 async def news_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -152,19 +155,6 @@ async def news_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Fetching the latest news, please wait...") 
     news = fetch_news(query)  # Ensure the query is used in fetching news
     await update.message.reply_text(f"Latest News:\n\n{news}")
-
-
-    # Simple parsing to separate query and category (if provided)
-    # if args:
-    #     query = args[0]
-    #     if len(args) > 1:
-    #         category = args[1]
-
-    # query = ' '.join(context.args) if context.args else 'latest'
-    # tells chat that the bot is fetching the news
-    # await update.message.reply_text("Fetching the latest news, please wait...") 
-    # news = fetch_news(category, query)  # Ensure the query is used in fetching news
-    # await update.message.reply_text(f"Latest News:\n\n{news}")
 
 async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.inline_query.query
@@ -180,15 +170,8 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # A function to get the news 
 def fetch_news(query='latest'):
     try:
-        # if category.lower() == 'categories':
-        #     # Provide a list of available news categories
-        #     return "Available news categories: business, entertainment, health, science, sports, technology"
-
-        # if category.lower() not in ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology']:
-        #     return "Invalid category. Type /news categories to see available categories."
         url = f"https://gnews.io/api/v4/top-headlines?token={GNEWS_API_KEY}&lang=en&q={query}"
         response = requests.get(url)
-
 
         if response.status_code == 200:
             print("iuoioi")
@@ -210,7 +193,7 @@ def fetch_news(query='latest'):
         logger.error(f"An error occurred: {e}")
         return "Failed to retrieve news due to an error."
     
-# --------------------------------------------------------------------WEATHER FEATURE--------------------------------------------------------------------
+# --------------------------------------------------------------------WEATHER FEATURE----------------------------------------------------
 
 # Modify the function to fetch weather
 async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -255,8 +238,7 @@ def fetch_weather(city):
     except requests.RequestException as e:
         return f"Failed to retrieve weather information due to an error: {e}"
 
-
-# ----------------------------------------------------------------------MESSAGE HANDLER--------------------------------------------------------------------
+# ----------------------------------------------------------------------MESSAGE HANDLER-------------------------------------------------
     
 # Comment
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -280,7 +262,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logger.error(f'Update {update} caused error {context.error}')
 
-# -------------------------------------------------------------------------APP POLLING--------------------------------------------------------------------------
+# -------------------------------------------------------------------------APP POLLING--------------------------------------------------
 
 if __name__ == '__main__':
     app = Application.builder().token(TOKEN).build()
