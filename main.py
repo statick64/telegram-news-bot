@@ -1,4 +1,4 @@
-# Required libs, please see requirements.txt for installed libs PIP INSTALL
+# Required libs, please see requirements.txt for installed libs, try pip install -r requirements.txt
 import os
 import datetime
 import random
@@ -230,7 +230,6 @@ def fetch_weather(city):
                 f"[Weather Icon]({weather_icon_url})\n"
                 f"Local Time: {localtime}"
             )
-
             return reply_text
         else:
             return f"Failed to retrieve weather information. Error: {response.text}"
