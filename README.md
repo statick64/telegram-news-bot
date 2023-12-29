@@ -1,6 +1,6 @@
 # Telegram News Bot
 
-## Environment Setup
+### Environment Setup
 
 Setting up the environment for the Telegram News Bot is a straightforward process. To ensure a smooth experience, make sure to follow these steps:
 
