@@ -24,8 +24,9 @@ WEATHER_API_KEY: Final = os.getenv('WEATHER_API_KEY')
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-<<<<<<< HEAD
-#handling the different commands
+# ---------------------------------------------------START-------------------------------------------------------------------
+
+# Handling the start commands - Introduction to the bot
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     start_text = (
         "🌟 **Hallo! I am Plutomenace News Bot!** 🌟\n\n"
@@ -36,25 +37,9 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.message.reply_text(start_text)
 
-# Help descriptions
-=======
-# ---------------------------------------------------START-------------------------------------------------------------------
-
-# Handling the start commands - Introduction to the bot
-async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    start_text = (
-        "🌟 **Hallo! I am Southsider News Bot!** 🌟\n\n"
-        "I'm here to keep you informed with the latest news. "
-        "Type /help to see all available commands and get started. "
-        "Feel free to use /news to fetch headlines or search for news inline!\n\n"
-        "Happy reading! 📰😊"
-    )
-    await update.message.reply_text(start_text)
-
 # --------------------------------------------------------HELP---------------------------------------------------------------
 
 # Help descriptions - Functions: start, help, custom, news, weather
->>>>>>> origin/modified_main
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = (
         "🌟 **Welcome to the News Bot!** 🌟\n\n"
@@ -62,12 +47,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/start - Welcome message and basic bot instructions.\n"
         "/help - Shows this help message detailing command usage.\n"
         "/custom - Sends a custom message.\n"
-<<<<<<< HEAD
-        "/news - Fetches and displays the latest news.\n\n"
-=======
         "/news - Fetches and displays the latest news.\n"
         "/weather - Fetches and displays the current weather report and localtime.\n\n"
->>>>>>> origin/modified_main
         "🗂️ **News Categories:**\n"
         "/news business - Latest business news\n"
         "/news entertainment - Entertainment updates\n"
@@ -80,18 +61,6 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.message.reply_text(help_text)
 
-<<<<<<< HEAD
-# Custom command chat
-async def custom_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    under_construction_text = (
-        "🚧 **Under Construction!** 🚧\n\n"
-        "Sorry, the custom feature is still in development. "
-        "We're working hard to bring you exciting new features. "
-        "Stay tuned for updates! 😊"
-    )
-    await update.message.reply_text(under_construction_text)
-
-=======
 # ----------------------------------------------------------CUSTOM-------------------------------------------------------------
 
 # Custom command chat
@@ -181,7 +150,6 @@ def handle_response(text: str) -> str:
 
 # ----------------------------------------------------------------NEWS FEATURE----------------------------------------------------------
 
->>>>>>> origin/modified_main
 # Fetching News from web
 async def news_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = ' '.join(context.args) if context.args else 'latest'
@@ -226,10 +194,6 @@ def fetch_news(query='latest'):
         url = f"https://gnews.io/api/v4/top-headlines?token={GNEWS_API_KEY}&lang=en&q={query}"
         response = requests.get(url)
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/modified_main
         if response.status_code == 200:
             print("iuoioi")
             data = response.json()
@@ -252,8 +216,6 @@ def fetch_news(query='latest'):
     
 # --------------------------------------------------------------------WEATHER FEATURE----------------------------------------------------
 
-<<<<<<< HEAD
-=======
 # Modify the function to fetch weather
 async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     city = ' '.join(context.args)  # Extract city from command arguments
@@ -298,7 +260,6 @@ def fetch_weather(city):
 
 # ----------------------------------------------------------------------MESSAGE HANDLER-------------------------------------------------
     
->>>>>>> origin/modified_main
 # Comment
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message_type: str = update.message.chat.type
