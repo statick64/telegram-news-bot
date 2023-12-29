@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 main.py
 test.py
 test2.py
 requirements.txt
 .env
 README.md
+=======
+.env
+chat
+chatbot
+>>>>>>> origin/modified_main
