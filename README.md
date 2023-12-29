@@ -7,7 +7,7 @@ Setting up the environment for the Telegram News Bot is a straightforward proces
 1. **python-dotenv Documentation:**
    - Refer to the [python-dotenv documentation](https://pypi.org/project/python-dotenv/) for detailed instructions on how to set up and manage environment variables.
 
-## Required APIs
+### Required APIs
 
 The Telegram News Bot relies on the following APIs to provide accurate and up-to-date information. Before using the bot, it's essential to familiarize yourself with these APIs and obtain the necessary credentials:
 
