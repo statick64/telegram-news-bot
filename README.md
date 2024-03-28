@@ -1,8 +1,8 @@
 # Telegram News Bot
 
-![Chat Screen 1](screen1.jpg)
+<img src="screen1.jpg" alt="Chat Screen 1" width="300">
 
-![Chat Screen 2](screen2.jpg)
+<img src="screen2.jpg" alt="Chat Screen 2" width="300">
 
 ### Environment Setup
 
