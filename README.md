@@ -1,5 +1,9 @@
 # Telegram News Bot
 
+![Chat Screen 1](screen1.jpg)
+
+![Chat Screen 2](screen2.jpg)
+
 ### Environment Setup
 
 Setting up the environment for the Telegram News Bot is a straightforward process. To ensure a smooth experience, make sure to follow these steps:
@@ -12,6 +16,7 @@ Setting up the environment for the Telegram News Bot is a straightforward proces
 The Telegram News Bot relies on the following APIs to provide accurate and up-to-date information. Before using the bot, it's essential to familiarize yourself with these APIs and obtain the necessary credentials:
 
 1. **Gnews API Documentation:**
+
    - Explore the [Gnews API documentation](https://gnews.io/docs/v4#introduction) to understand how the bot fetches top headlines and news articles.
 
 2. **WeatherAPI Documentation:**
@@ -39,21 +44,25 @@ The Telegram News Bot delivers the latest headlines to your Telegram chat seamle
 ## Usage
 
 - **Start the Bot:**
+
   ```
   /start
   ```
 
 - **Get Help:**
+
   ```
   /help
   ```
 
 - **Fetch Weather report:**
+
   ```
   /weather [city]
   ```
 
 - **Fetch Latest News:**
+
   ```
   /news [query]
   ```
